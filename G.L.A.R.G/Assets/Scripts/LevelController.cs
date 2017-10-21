@@ -6,29 +6,76 @@ using UnityEngine.SceneManagement;
 
 public class LevelController : MonoBehaviour {
 
+	//Public variables
 	public Text TaskText;
-	public int taskNumber = 0; 
+	public int taskNumber = 1; 
 	public Material ObjectiveMaterial;
+	public Material DefaultMaterial;
+	public GameObject Player;
+
+
+	//HeldItem
+	public bool Itemheld = false;
+	public GameObject HandPoint;
+	public Rigidbody RB;
+
+	// TaskItems
+	public GameObject TaskObject;
+	public GameObject FishFood;
+	public GameObject FishBowl;
+	public GameObject TrashBag;
 
 	void Start () {
 		DontDestroyOnLoad (this);
+		taskNumber = 1;
+		UpdateTask ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		RB = TaskObject.GetComponent<Rigidbody> ();
+
+		if (Input.GetButtonDown("Interact")) {
+			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+			RaycastHit hit;
+			if (TaskObject.gameObject.GetComponent<Collider>().Raycast (ray, out hit, 2.0f)) {
+				if (taskNumber == 2 || taskNumber == 12 || taskNumber == 13 && Itemheld == false) {
+					RB.useGravity = false;
+					TaskObject.gameObject.transform.position = new Vector3 (HandPoint.transform.position.x,HandPoint.transform.position.y,HandPoint.transform.position.z);
+					//TaskObject.transform.parent = Player.gameObject.transform;
+					TaskObject.transform.SetParent (Player.transform);
+					Itemheld = true;
+				}
+				taskNumber++;
+				TaskObject.gameObject.GetComponent<Renderer> ().material = DefaultMaterial;
+				UpdateTask();	
+			}
+		}
+
+		if (Input.GetButtonDown ("Drop") && Itemheld == true) {
+			TaskObject.gameObject.transform.parent = null;
+			RB.useGravity = true;
+			Itemheld = false;
+		}
 	}
 
 	public void UpdateTask(){
 
 		switch(taskNumber){
 
+		case 0:
+			TaskText.text = "";
+
+			break;
+
 		case 1:
 			TaskText.text = "Feed the fish";
+			TaskObject = FishFood;
 			break;
 
 		case 2:
 			TaskText.text = "Take out the trash";
+			TaskObject = FishBowl;
 			break;
 
 		case 3:
@@ -94,6 +141,9 @@ public class LevelController : MonoBehaviour {
 		case 18:
 			TaskText.text = "Go upstairs and sleep.";
 			break;
+		}
+		if (TaskObject != null) {
+			TaskObject.gameObject.GetComponent<Renderer> ().material = ObjectiveMaterial;
 		}
 	}
 }

@@ -38,9 +38,9 @@ public class LevelController : MonoBehaviour {
 		if (Input.GetButtonDown("Interact")) {
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
-			if (TaskObject.gameObject.GetComponent<Collider>().Raycast (ray, out hit, 2.0f)) {
+			if (TaskObject.gameObject.GetComponent<Collider>().Raycast (ray, out hit, 5.0f)) {
 				if (taskNumber == 2 || taskNumber == 12 || taskNumber == 13 && Itemheld == false) {
-					RB.useGravity = false;
+					RB.useGravity = true;
 					TaskObject.gameObject.transform.position = new Vector3 (HandPoint.transform.position.x,HandPoint.transform.position.y,HandPoint.transform.position.z);
 					//TaskObject.transform.parent = Player.gameObject.transform;
 					TaskObject.transform.SetParent (Player.transform);
@@ -54,7 +54,7 @@ public class LevelController : MonoBehaviour {
 
 		if (Input.GetButtonDown ("Drop") && Itemheld == true) {
 			TaskObject.gameObject.transform.parent = null;
-			RB.useGravity = true;
+			RB.useGravity = false;
 			Itemheld = false;
 		}
 	}

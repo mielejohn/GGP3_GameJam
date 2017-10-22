@@ -12,6 +12,7 @@ public class LevelController : MonoBehaviour {
 	public Material ObjectiveMaterial;
 	public Material DefaultMaterial;
 	public GameObject Player;
+	public GameObject SC;
 
 
 	//HeldItem
@@ -40,9 +41,8 @@ public class LevelController : MonoBehaviour {
 			RaycastHit hit;
 			if (TaskObject.gameObject.GetComponent<Collider>().Raycast (ray, out hit, 5.0f)) {
 				if (taskNumber == 2 || taskNumber == 12 || taskNumber == 13 && Itemheld == false) {
-					RB.useGravity = true;
+					RB.useGravity =false;
 					TaskObject.gameObject.transform.position = new Vector3 (HandPoint.transform.position.x,HandPoint.transform.position.y,HandPoint.transform.position.z);
-					//TaskObject.transform.parent = Player.gameObject.transform;
 					TaskObject.transform.SetParent (Player.transform);
 					Itemheld = true;
 				}
@@ -54,7 +54,7 @@ public class LevelController : MonoBehaviour {
 
 		if (Input.GetButtonDown ("Drop") && Itemheld == true) {
 			TaskObject.gameObject.transform.parent = null;
-			RB.useGravity = false;
+			RB.useGravity = true;
 			Itemheld = false;
 		}
 	}
@@ -139,8 +139,13 @@ public class LevelController : MonoBehaviour {
 			break;
 
 		case 18:
-			TaskText.text = "Go upstairs and sleep.";
+			TaskText.text = "Go upstairs";
 			break;
+		
+		case 19:
+			TaskText.text = "Go to sleep.";
+		break;
+			
 		}
 		if (TaskObject != null) {
 			TaskObject.gameObject.GetComponent<Renderer> ().material = ObjectiveMaterial;

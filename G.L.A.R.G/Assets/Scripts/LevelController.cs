@@ -13,23 +13,58 @@ public class LevelController : MonoBehaviour {
 	public Material DefaultMaterial;
 	public GameObject Player;
 	public GameObject SC;
+	//public bool GoneToBasement;
 
 
 	//HeldItem
 	public bool Itemheld = false;
+	public bool DropPointActive = false;
 	public GameObject HandPoint;
 	public Rigidbody RB;
+	public GameObject BasementDoorway;
 
 	// TaskItems
 	public GameObject TaskObject;
+	public GameObject PlacePoint;
 	public GameObject FishFood;
-	public GameObject FishBowl;
 	public GameObject TrashBag;
+	public GameObject Trashcan;
+	public GameObject Clock;
+	public GameObject Dishes;
+	public GameObject DirtyClothes;
+	public GameObject WashingMachine;
+	public GameObject WetClothes;
+	public GameObject Dryer;
+	public GameObject DoorLock;
+	public GameObject BasementDoor;
+	/*public GameObject LightSwitch;
+	public GameObject Stains;
+	public GameObject Rags;
+	public GameObject Axe;*/
+	public GameObject DeadTrash;
+	public GameObject Hole;
+	public GameObject Dinner;
 
 	void Start () {
 		DontDestroyOnLoad (this);
-		taskNumber = 1;
+		//taskNumber = 1;
 		UpdateTask ();
+
+		//if (PlayerPrefs.HasKey("GoneToBasement")) {
+		if (taskNumber >= 10) {
+			Debug.Log ("Has key is true");
+			Debug.Log ("TaskNumber is: " + PlayerPrefs.GetInt("TaskNumber"));
+			taskNumber = PlayerPrefs.GetInt("TaskNumber");
+			Player.gameObject.transform.position = new Vector3 (BasementDoorway.transform.position.x, BasementDoorway.transform.position.y, BasementDoorway.transform.position.z);
+			TaskObject = DeadTrash;
+			PlacePoint = Hole;
+			TaskObject.gameObject.transform.position = new Vector3 (HandPoint.transform.position.x,HandPoint.transform.position.y,HandPoint.transform.position.z);
+			PlacePoint.gameObject.GetComponent<Renderer> ().material = ObjectiveMaterial;
+			TaskObject.transform.SetParent (Player.transform);
+			DropPointActive = true;
+			Itemheld = true;
+			UpdateTask ();
+		}
 	}
 	
 	// Update is called once per frame
@@ -40,22 +75,36 @@ public class LevelController : MonoBehaviour {
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
 			if (TaskObject.gameObject.GetComponent<Collider>().Raycast (ray, out hit, 5.0f)) {
-				if (taskNumber == 2 || taskNumber == 12 || taskNumber == 13 && Itemheld == false) {
-					RB.useGravity =false;
+				if (taskNumber == 2 || taskNumber == 12 || taskNumber == 13 && Itemheld == false && DropPointActive == false) {
 					TaskObject.gameObject.transform.position = new Vector3 (HandPoint.transform.position.x,HandPoint.transform.position.y,HandPoint.transform.position.z);
+					PlacePoint.gameObject.GetComponent<Renderer> ().material = ObjectiveMaterial;
 					TaskObject.transform.SetParent (Player.transform);
+					DropPointActive = true;
 					Itemheld = true;
+				}
+				if (taskNumber == 6 || taskNumber == 7) {
+					TaskObject.gameObject.SetActive (false);
 				}
 				taskNumber++;
 				TaskObject.gameObject.GetComponent<Renderer> ().material = DefaultMaterial;
 				UpdateTask();	
 			}
+
+
 		}
 
-		if (Input.GetButtonDown ("Drop") && Itemheld == true) {
-			TaskObject.gameObject.transform.parent = null;
-			RB.useGravity = true;
-			Itemheld = false;
+		if (Input.GetButtonDown ("Drop") && Itemheld == true&&DropPointActive == true) {
+			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+			RaycastHit hit;
+			if (PlacePoint.gameObject.GetComponent<Collider> ().Raycast (ray, out hit, 5.0f)) {
+				TaskObject.gameObject.transform.parent = null;
+				TaskObject.gameObject.SetActive (false);
+				Itemheld = false;
+				PlacePoint.gameObject.GetComponent<Renderer> ().material = DefaultMaterial;
+				DropPointActive = false;
+				taskNumber++;
+				UpdateTask();
+			}
 		}
 	}
 
@@ -75,63 +124,81 @@ public class LevelController : MonoBehaviour {
 
 		case 2:
 			TaskText.text = "Take out the trash";
-			TaskObject = FishBowl;
+			TaskObject = TrashBag;
+			PlacePoint = Trashcan;
 			break;
-
 		case 3:
-			TaskText.text = "Set the clock";
+			TaskText.text = "Take out the trash";
+			TaskObject = TrashBag;
+			PlacePoint = Trashcan;
 			break;
 
 		case 4:
-			TaskText.text = "Run the dishwasher";
+			TaskText.text = "Set the clock";
+			TaskObject = Clock;
 			break;
 
 		case 5:
-			TaskText.text = "Put clothes in the washer";
+			TaskText.text = "Wash the dishes";
+			TaskObject = Dishes;
 			break;
 
 		case 6:
-			TaskText.text = "Put clothes in the Dryer";
+			TaskText.text = "Put clothes in the washer";
+			TaskObject = DirtyClothes;
+			//PlacePoint = WashingMachine;
 			break;
 
 		case 7:
-			TaskText.text = "Lock the door.";
+			TaskText.text = "Put clothes in the Dryer";
+			TaskObject = WetClothes;
+			//PlacePoint = Dryer;
 			break;
 
 		case 8:
-			TaskText.text = "Go to the basement.";
+			TaskText.text = "Lock the door.";
+			TaskObject = DoorLock;
 			break;
 
 		case 9:
-			TaskText.text = "Turn on the lights";
+			TaskText.text = "Go to the basement.";
+			TaskObject = BasementDoor;
 			break;
 
-		case 10:
-			TaskText.text = "Clean up the stains.";
+		/*case 10:
+			TaskText.text = "Turn on the lights";
+			TaskObject = LightSwitch;
 			break;
 
 		case 11:
-			TaskText.text = "Throw out the rags.";
+			TaskText.text = "Clean up the stains.";
+			TaskObject = Stains;
 			break;
 
 		case 12:
-			TaskText.text = "Grab the shovel.";
+			TaskText.text = "Throw out the rags.";
+			TaskObject = Rags;
 			break;
 
 		case 13:
-			TaskText.text = "Take out the trash.";
+			TaskText.text = "Grab the shovel.";
+			TaskObject = Axe;
 			break;
 
 		case 14:
-			TaskText.text = "Bury the trash outside.";
+			TaskText.text = "Take out the trash.";
+			TaskObject = DeadTrash;
 			break;
-
+		*/
 		case 15:
-			TaskText.text = "Cook dinner";
+			TaskText.text = "Bury the trash outside.";
+			TaskObject = DeadTrash;
+			PlacePoint = Hole;
 			break;
 
 		case 16:
-			TaskText.text = "Set the table";
+			TaskText.text = "Cook dinner";
+			TaskObject = Dinner;
 			break;
 
 		case 17:
@@ -141,10 +208,6 @@ public class LevelController : MonoBehaviour {
 		case 18:
 			TaskText.text = "Go upstairs";
 			break;
-		
-		case 19:
-			TaskText.text = "Go to sleep.";
-		break;
 			
 		}
 		if (TaskObject != null) {

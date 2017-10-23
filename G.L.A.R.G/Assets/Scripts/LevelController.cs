@@ -22,6 +22,8 @@ public class LevelController : MonoBehaviour {
 	public GameObject HandPoint;
 	public Rigidbody RB;
 	public GameObject BasementDoorway;
+	public GameObject DoorWaySpawn;
+	public GameObject Lights;
 
 	// TaskItems
 	public GameObject TaskObject;
@@ -37,21 +39,23 @@ public class LevelController : MonoBehaviour {
 	public GameObject Dryer;
 	public GameObject DoorLock;
 	public GameObject BasementDoor;
-	/*public GameObject LightSwitch;
+	public GameObject LightSwitch;
 	public GameObject Stains;
 	public GameObject Rags;
-	public GameObject Axe;*/
+	public GameObject Axe;
 	public GameObject DeadTrash;
 	public GameObject Hole;
 	public GameObject Dinner;
+	public GameObject Food;
+	public GameObject Stair;
 
 	void Start () {
-		DontDestroyOnLoad (this);
+		//DontDestroyOnLoad (this);
 		//taskNumber = 1;
 		UpdateTask ();
 
 		//if (PlayerPrefs.HasKey("GoneToBasement")) {
-		if (taskNumber >= 10) {
+		/*if (taskNumber >= 10) {
 			Debug.Log ("Has key is true");
 			Debug.Log ("TaskNumber is: " + PlayerPrefs.GetInt("TaskNumber"));
 			taskNumber = PlayerPrefs.GetInt("TaskNumber");
@@ -64,7 +68,7 @@ public class LevelController : MonoBehaviour {
 			DropPointActive = true;
 			Itemheld = true;
 			UpdateTask ();
-		}
+		}*/
 	}
 	
 	// Update is called once per frame
@@ -75,16 +79,30 @@ public class LevelController : MonoBehaviour {
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
 			if (TaskObject.gameObject.GetComponent<Collider>().Raycast (ray, out hit, 5.0f)) {
-				if (taskNumber == 2 || taskNumber == 12 || taskNumber == 13 && Itemheld == false && DropPointActive == false) {
+				if (taskNumber == 2 || taskNumber == 14 && Itemheld == false && DropPointActive == false) {
 					TaskObject.gameObject.transform.position = new Vector3 (HandPoint.transform.position.x,HandPoint.transform.position.y,HandPoint.transform.position.z);
 					PlacePoint.gameObject.GetComponent<Renderer> ().material = ObjectiveMaterial;
 					TaskObject.transform.SetParent (Player.transform);
 					DropPointActive = true;
 					Itemheld = true;
+
 				}
 				if (taskNumber == 6 || taskNumber == 7) {
 					TaskObject.gameObject.SetActive (false);
 				}
+
+				if (taskNumber == 10) {
+					Lights.gameObject.SetActive (true);
+				}
+
+				if (taskNumber == 12 || taskNumber == 13) {
+					TaskObject.gameObject.SetActive (false);
+				}
+
+				if(taskNumber == 16){
+					Food.gameObject.SetActive (true);
+				}
+
 				taskNumber++;
 				TaskObject.gameObject.GetComponent<Renderer> ().material = DefaultMaterial;
 				UpdateTask();	
@@ -164,8 +182,7 @@ public class LevelController : MonoBehaviour {
 			TaskText.text = "Go to the basement.";
 			TaskObject = BasementDoor;
 			break;
-
-		/*case 10:
+		case 10:
 			TaskText.text = "Turn on the lights";
 			TaskObject = LightSwitch;
 			break;
@@ -188,25 +205,24 @@ public class LevelController : MonoBehaviour {
 		case 14:
 			TaskText.text = "Take out the trash.";
 			TaskObject = DeadTrash;
-			break;
-		*/
-		case 15:
-			TaskText.text = "Bury the trash outside.";
-			TaskObject = DeadTrash;
 			PlacePoint = Hole;
 			break;
 
+		case 15:
+			TaskText.text = "Bury the trash outside.";
+			PlacePoint = Hole;
+			TaskObject = DeadTrash;
+
+			break;
+
 		case 16:
-			TaskText.text = "Cook dinner";
+			TaskText.text = "Serve dinner";
 			TaskObject = Dinner;
 			break;
 
 		case 17:
-			TaskText.text = "Serve dinner";
-			break;
-
-		case 18:
 			TaskText.text = "Go upstairs";
+			TaskObject = Stair;
 			break;
 			
 		}

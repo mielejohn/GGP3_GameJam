@@ -6,6 +6,7 @@ TagManager:
   tags:
   - BasementDoor
   - BasementStairs
+  - UpstairsDoor
   layers:
   - Default
   - TransparentFX
